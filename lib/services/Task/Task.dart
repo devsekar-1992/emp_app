@@ -13,4 +13,8 @@ class TaskRequest {
     final response = await Api().getRequest('task/view', {'id': taskId['id']});
     return TaskDetailModel.fromJson(response.data);
   }
+
+  Future saveTaskEdit(taskInfo) async {
+    final response = await Api().postRequest('task/update', taskInfo);
+  }
 }

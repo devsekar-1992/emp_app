@@ -32,5 +32,13 @@ class AuthRequest {
     return 'no';
   }
 
+  Future<String?> getCurrentUserId() async {
+    var data = await HiveDB().getFromBox('user_model', 'um');
+    if (data != null) {
+      return data.toString();
+    }
+    return null;
+  }
+
   logout() {}
 }

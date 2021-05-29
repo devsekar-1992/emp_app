@@ -14,6 +14,8 @@ import 'package:emp_app/services/auth/auth.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 
+import 'Tasks/bloc/detail/task_detail_bloc.dart';
+
 void main() async {
   WidgetsFlutterBinding.ensureInitialized();
   Bloc.observer = EmpBlocObserver();
@@ -27,8 +29,15 @@ void main() async {
               final authService = AuthRequest();
               return AuthBloc(authService)..add(AppLoaded());
             }),
-            BlocProvider<TaskBloc>(create: (context) {
-              return TaskBloc(
+            BlocProvider<TaskBloc>(
+              create: (context) {
+                return TaskBloc(
+                    taskRespository:
+                        TaskRespository(taskRequest: TaskRequest()));
+              },
+            ),
+            BlocProvider<TaskDetailBloc>(create: (context) {
+              return TaskDetailBloc(
                   taskRespository: TaskRespository(taskRequest: TaskRequest()));
             }),
           ],

@@ -53,6 +53,7 @@ Card makeCard(context, data) => Card(
     margin: EdgeInsets.symmetric(horizontal: 10, vertical: 10),
     child: InkWell(
       onTap: () {
+        BlocProvider.of<TaskBloc>(context).close();
         Navigator.push(
             context,
             MaterialPageRoute(
