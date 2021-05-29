@@ -1,4 +1,5 @@
 import 'package:emp_app/Tasks/models/task_detail_model.dart';
+import 'package:emp_app/Tasks/models/task_edit_model.dart';
 import 'package:emp_app/services/Task/Task.dart';
 
 import '../../models/task_list_model.dart';
@@ -10,4 +11,5 @@ class TaskRespository {
 
   Future<TaskDetailModel> getTaskDetails(taskId) =>
       taskRequest.getTaskDetailModel(taskId);
+  Future saveTaskInfo(TaskForm params) => taskRequest.saveTaskEdit(params);
 }

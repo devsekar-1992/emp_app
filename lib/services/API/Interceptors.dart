@@ -26,12 +26,10 @@ class AppInterceptors extends Interceptor {
 
   FutureOr<dynamic> requestInterceptor(RequestOptions options, handler) async {
     var token = await HiveDB().getFromBox('user_info', 'token');
-    print('TOKEN');
-    print(token);
     if (token != null) {
       options.headers.addAll({"Authorization": "Bearer " + token});
     }
-    options.headers.addAll({"content-type": "application/json"});
+    options.headers.addAll({"Content-Type": "application/json"});
     options.path = options.path;
     return handler.next(options);
   }

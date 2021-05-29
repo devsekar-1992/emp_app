@@ -15,6 +15,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 
 import 'Tasks/bloc/detail/task_detail_bloc.dart';
+import 'Tasks/bloc/edit/bloc/task_edit_bloc_bloc.dart';
 
 void main() async {
   WidgetsFlutterBinding.ensureInitialized();
@@ -38,6 +39,10 @@ void main() async {
             ),
             BlocProvider<TaskDetailBloc>(create: (context) {
               return TaskDetailBloc(
+                  taskRespository: TaskRespository(taskRequest: TaskRequest()));
+            }),
+            BlocProvider<TaskEditBlocBloc>(create: (context) {
+              return TaskEditBlocBloc(
                   taskRespository: TaskRespository(taskRequest: TaskRequest()));
             }),
           ],

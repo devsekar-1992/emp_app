@@ -1,9 +1,7 @@
 import 'package:emp_app/Tasks/bloc/detail/task_detail_state.dart';
 import 'package:emp_app/Tasks/bloc/task_event.dart';
-import 'package:emp_app/Tasks/bloc/task_state.dart';
 import 'package:emp_app/Tasks/data/task_repository/task_repository.dart';
 import 'package:emp_app/Tasks/models/task_detail_model.dart';
-import 'package:emp_app/Tasks/models/task_list_model.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 
 class TaskDetailBloc extends Bloc<TaskEvent, TaskDetailState> {
@@ -15,7 +13,9 @@ class TaskDetailBloc extends Bloc<TaskEvent, TaskDetailState> {
   Stream<TaskDetailState> mapEventToState(TaskEvent event) async* {
     yield TaskDetailInitial();
     try {
+      print(event);
       if (event is TaskDetail) {
+        print('Detail View Trigger');
         yield* _mapTaskDetailToState(event);
       }
     } catch (e) {}
