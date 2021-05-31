@@ -2,8 +2,7 @@ import 'package:emp_app/Tasks/models/task_detail_model.dart';
 import 'package:emp_app/Tasks/models/task_list_model.dart';
 import 'package:equatable/equatable.dart';
 
-abstract class TaskState extends Equatable {
-  @override
+abstract class TaskState {
   List<Object> get props => [];
 }
 

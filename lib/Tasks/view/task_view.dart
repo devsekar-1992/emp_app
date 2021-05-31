@@ -1,7 +1,11 @@
+import 'package:emp_app/Tasks/bloc/detail/task_detail_bloc.dart';
+import 'package:emp_app/Tasks/bloc/edit/bloc/task_edit_bloc_bloc.dart';
 import 'package:emp_app/Tasks/bloc/task_bloc.dart';
 import 'package:emp_app/Tasks/bloc/task_event.dart';
 import 'package:emp_app/Tasks/bloc/task_state.dart';
+import 'package:emp_app/Tasks/data/task_repository/task_repository.dart';
 import 'package:emp_app/Tasks/view/task_detail.dart';
+import 'package:emp_app/services/Task/Task.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 
@@ -53,11 +57,20 @@ Card makeCard(context, data) => Card(
     margin: EdgeInsets.symmetric(horizontal: 10, vertical: 10),
     child: InkWell(
       onTap: () {
-        BlocProvider.of<TaskBloc>(context).close();
         Navigator.push(
             context,
             MaterialPageRoute(
-                builder: (context) => TaskDetailView(taskId: data.taskId)));
+              builder: (context) => MultiBlocProvider(providers: [
+                BlocProvider<TaskDetailBloc>(
+                    create: (context) => TaskDetailBloc(
+                        taskRespository:
+                            TaskRespository(taskRequest: TaskRequest()))),
+                BlocProvider<TaskEditBlocBloc>(
+                    create: (context) => TaskEditBlocBloc(
+                        taskRespository:
+                            TaskRespository(taskRequest: TaskRequest()))),
+              ], child: TaskDetailView(taskId: data.taskId)),
+            ));
       },
       child: Container(
         decoration: BoxDecoration(color: Color.fromRGBO(64, 75, 96, .9)),

@@ -1,3 +1,4 @@
+import 'package:emp_app/Settings/Picklist/models/picklist_items_model.dart';
 import 'package:emp_app/Tasks/models/task_detail_model.dart';
 import 'package:emp_app/Tasks/models/task_edit_model.dart';
 import 'package:emp_app/services/Task/Task.dart';
@@ -11,5 +12,9 @@ class TaskRespository {
 
   Future<TaskDetailModel> getTaskDetails(taskId) =>
       taskRequest.getTaskDetailModel(taskId);
-  Future saveTaskInfo(TaskForm params) => taskRequest.saveTaskEdit(params);
+  Future<TaskEditModel> getTaskReview(taskReviewId) =>
+      taskRequest.getTaskReviewData(taskReviewId);
+  Future<PicklistItemsModel> loadPickListData() =>
+      taskRequest.getPicklistList();
+  Future saveTaskInfo(EditData params) => taskRequest.saveTaskEdit(params);
 }

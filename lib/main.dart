@@ -29,22 +29,7 @@ void main() async {
             BlocProvider<AuthBloc>(create: (context) {
               final authService = AuthRequest();
               return AuthBloc(authService)..add(AppLoaded());
-            }),
-            BlocProvider<TaskBloc>(
-              create: (context) {
-                return TaskBloc(
-                    taskRespository:
-                        TaskRespository(taskRequest: TaskRequest()));
-              },
-            ),
-            BlocProvider<TaskDetailBloc>(create: (context) {
-              return TaskDetailBloc(
-                  taskRespository: TaskRespository(taskRequest: TaskRequest()));
-            }),
-            BlocProvider<TaskEditBlocBloc>(create: (context) {
-              return TaskEditBlocBloc(
-                  taskRespository: TaskRespository(taskRequest: TaskRequest()));
-            }),
+            })
           ],
           child: MyApp(
             appRouter: AppRouter(),

@@ -1,10 +1,12 @@
 class PicklistItemsModel {
-  late Data data;
+  late PicklistData data;
 
   PicklistItemsModel({required this.data});
 
   PicklistItemsModel.fromJson(Map<String, dynamic> json) {
-    data = (json['data'] != null ? new Data.fromJson(json['data']) : null)!;
+    data = (json['data'] != null
+        ? new PicklistData.fromJson(json['data'])
+        : null)!;
   }
 
   Map<String, dynamic> toJson() {
@@ -16,16 +18,23 @@ class PicklistItemsModel {
   }
 }
 
-class Data {
+class PicklistData {
   late Users users;
   late TaskStatus taskStatus;
+  late ReviewStatus reviewStatus;
 
-  Data({required this.users, required this.taskStatus});
+  PicklistData(
+      {required this.users,
+      required this.taskStatus,
+      required this.reviewStatus});
 
-  Data.fromJson(Map<String, dynamic> json) {
+  PicklistData.fromJson(Map<String, dynamic> json) {
     users = (json['users'] != null ? new Users.fromJson(json['users']) : null)!;
     taskStatus = (json['taskStatus'] != null
         ? new TaskStatus.fromJson(json['taskStatus'])
+        : null)!;
+    reviewStatus = (json['reviewStatus'] != null
+        ? new ReviewStatus.fromJson(json['reviewStatus'])
         : null)!;
   }
 
@@ -36,6 +45,9 @@ class Data {
     }
     if (this.taskStatus != null) {
       data['taskStatus'] = this.taskStatus.toJson();
+    }
+    if (this.reviewStatus != null) {
+      data['reviewStatus'] = this.reviewStatus.toJson();
     }
     return data;
   }
@@ -128,6 +140,52 @@ class StatusList {
     final Map<String, dynamic> data = new Map<String, dynamic>();
     data['status_id'] = this.statusId;
     data['status_name'] = this.statusName;
+    return data;
+  }
+}
+
+class ReviewStatus {
+  late bool? status;
+  late List<ReviewStatusList> reviewStatusList;
+
+  ReviewStatus({this.status, required this.reviewStatusList});
+
+  ReviewStatus.fromJson(Map<String, dynamic> json) {
+    status = json['status'];
+    if (json['reviewStatusList'] != null) {
+      reviewStatusList = new List<ReviewStatusList>.empty(growable: true);
+      json['reviewStatusList'].forEach((v) {
+        reviewStatusList.add(new ReviewStatusList.fromJson(v));
+      });
+    }
+  }
+
+  Map<String, dynamic> toJson() {
+    final Map<String, dynamic> data = new Map<String, dynamic>();
+    data['status'] = this.status;
+    if (this.reviewStatusList != null) {
+      data['reviewStatusList'] =
+          this.reviewStatusList.map((v) => v.toJson()).toList();
+    }
+    return data;
+  }
+}
+
+class ReviewStatusList {
+  int? id;
+  String? name;
+
+  ReviewStatusList({this.id, this.name});
+
+  ReviewStatusList.fromJson(Map<String, dynamic> json) {
+    id = json['review_type_id'];
+    name = json['review_type'];
+  }
+
+  Map<String, dynamic> toJson() {
+    final Map<String, dynamic> data = new Map<String, dynamic>();
+    data['review_type_id'] = this.id;
+    data['review_type'] = this.name;
     return data;
   }
 }

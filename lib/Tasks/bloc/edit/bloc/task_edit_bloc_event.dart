@@ -1,6 +1,6 @@
 part of 'task_edit_bloc_bloc.dart';
 
-abstract class TaskEditBlocEvent extends Equatable {
+abstract class TaskEditBlocEvent {
   const TaskEditBlocEvent();
 
   @override
@@ -18,7 +18,7 @@ class TaskEdit extends TaskEditBlocEvent {
 
 // ignore: must_be_immutable
 class CreateTask extends TaskEditBlocEvent {
-  TaskForm taskForm;
+  EditData taskForm;
   CreateTask({required this.taskForm});
   @override
   List<Object> get props => [];

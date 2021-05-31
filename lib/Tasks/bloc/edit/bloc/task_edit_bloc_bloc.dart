@@ -1,6 +1,7 @@
 import 'dart:async';
 
 import 'package:bloc/bloc.dart';
+import 'package:emp_app/Settings/Picklist/models/picklist_items_model.dart';
 import 'package:emp_app/Tasks/data/task_repository/task_repository.dart';
 import 'package:emp_app/Tasks/models/task_edit_model.dart';
 import 'package:equatable/equatable.dart';
@@ -37,8 +38,21 @@ class TaskEditBlocBloc extends Bloc<TaskEditBlocEvent, TaskEditBlocState> {
   Stream<TaskEditBlocState> _mapTaskEditToState(TaskEdit event) async* {
     yield TaskEditBlocLoading();
     try {
-      print(event.taskId);
-      yield TaskEditBlocSuccess();
-    } catch (e) {}
+      final PicklistItemsModel responsePicklist =
+          await taskRespository.loadPickListData();
+      print(responsePicklist);
+      final TaskEditModel response =
+          await taskRespository.getTaskReview(event.taskId);
+      if (response != null) {
+        yield TaskEditBlocSuccess(
+            taskEditModel: response.data[0],
+            picklistData: responsePicklist.data);
+      } else {
+        yield TaskEditBlocFailure();
+      }
+    } catch (e) {
+      print('Catch');
+      print(e.toString());
+    }
   }
 }

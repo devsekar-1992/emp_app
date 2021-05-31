@@ -32,17 +32,9 @@ class _TaskDetailViewState extends State<TaskDetailView> {
     return Scaffold(
         key: _scaffoldKey,
         body: BlocListener<TaskEditBlocBloc, TaskEditBlocState>(
-          listener: (context, state) {
-            if (state is TaskEditBlocSuccessSave) {
-              print('Detail Listener');
-              print(state);
-              taskDetailBloc.add(TaskDetail(taskId: widget.taskId));
-            }
-          },
+          listener: (context, state) {},
           child: BlocBuilder<TaskDetailBloc, TaskDetailState>(
             builder: (context, state) {
-              print('State');
-              print(state);
               if (state is TaskDetailInitial) {
                 taskDetailBloc.add(TaskDetail(taskId: widget.taskId));
               }
@@ -51,7 +43,6 @@ class _TaskDetailViewState extends State<TaskDetailView> {
               }
               if (state is TaskDetailSuccess) {
                 final response = state.taskDetailModel.data[0];
-                print(response);
                 return CustomScrollView(
                   slivers: [
                     SliverAppBar(
@@ -62,20 +53,30 @@ class _TaskDetailViewState extends State<TaskDetailView> {
                         delegate: SliverChildBuilderDelegate((context, index) {
                       if (response.taskReview!.isNotEmpty) {
                         return Card(
-                          margin: EdgeInsets.symmetric(
-                              horizontal: 10, vertical: 10),
-                          elevation: 10.0,
                           child: InkWell(
                             onTap: () {
-                              BlocProvider.of<TaskDetailBloc>(context).close();
                               Navigator.push(
                                   context,
                                   MaterialPageRoute(
-                                      builder: (context) => TaskEditView(
-                                            taskId: widget.taskId,
-                                            taskReviewId: response
-                                                .taskReview![index].reviewId,
-                                          )));
+                                      builder: (context) => MultiBlocProvider(
+                                              providers: [
+                                                BlocProvider<
+                                                        TaskEditBlocBloc>.value(
+                                                    value: taskEditBlocBloc
+                                                      ..add(TaskEdit(
+                                                          taskId: response
+                                                              .taskReview![
+                                                                  index]
+                                                              .reviewId))),
+                                                BlocProvider<
+                                                        TaskDetailBloc>.value(
+                                                    value: taskDetailBloc)
+                                              ],
+                                              child: TaskEditView(
+                                                taskId: widget.taskId,
+                                                taskReviewId: response
+                                                    .taskReview![index].taskId,
+                                              ))));
                             },
                             child: Container(
                               padding: EdgeInsets.all(20),
@@ -151,14 +152,22 @@ class _TaskDetailViewState extends State<TaskDetailView> {
               padding: const EdgeInsets.all(18.0),
               child: FloatingActionButton(
                 onPressed: () {
-                  BlocProvider.of<TaskDetailBloc>(context).close();
                   Navigator.push(
                       context,
                       MaterialPageRoute(
-                          builder: (context) => TaskEditView(
-                                taskId: widget.taskId,
-                                taskReviewId: 0,
-                              )));
+                          builder: (context) => MultiBlocProvider(
+                                  providers: [
+                                    BlocProvider<TaskEditBlocBloc>.value(
+                                        value: taskEditBlocBloc
+                                          ..add(
+                                              TaskEdit(taskId: widget.taskId))),
+                                    BlocProvider<TaskDetailBloc>.value(
+                                        value: taskDetailBloc)
+                                  ],
+                                  child: TaskEditView(
+                                    taskId: widget.taskId,
+                                    taskReviewId: 0,
+                                  ))));
                 },
                 child: Icon(Icons.add),
               ),
