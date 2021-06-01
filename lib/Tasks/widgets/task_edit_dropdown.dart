@@ -15,6 +15,7 @@ class TaskFormDropdown extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
+    print('Build once again');
     return DropdownButtonHideUnderline(
         child: DropdownButton(
             isExpanded: true,

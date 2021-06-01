@@ -24,4 +24,9 @@ class CreateTask extends TaskEditBlocEvent {
   List<Object> get props => [];
 }
 
+class TaskUpdate<T> extends TaskEditBlocEvent {
+  T value;
+  TaskUpdate({required this.value});
+}
+
 class TaskEditBackEvent extends TaskEditBlocEvent {}

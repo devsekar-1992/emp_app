@@ -33,6 +33,7 @@ class TaskEditBlocBloc extends Bloc<TaskEditBlocEvent, TaskEditBlocState> {
         yield TaskEditBlocSuccessSave();
       } catch (e) {}
     }
+    if (event is TaskUpdate) {}
   }
 
   Stream<TaskEditBlocState> _mapTaskEditToState(TaskEdit event) async* {
@@ -51,6 +52,14 @@ class TaskEditBlocBloc extends Bloc<TaskEditBlocEvent, TaskEditBlocState> {
         yield TaskEditBlocFailure();
       }
     } catch (e) {
+      print('Catch');
+      print(e.toString());
+    }
+  }
+
+  Stream<TaskEditBlocState> _mapTaskUpdateToState(TaskUpdate event) async* {
+    yield TaskEditBlocLoading();
+    try {} catch (e) {
       print('Catch');
       print(e.toString());
     }
