@@ -79,6 +79,7 @@ class _TaskEditViewState extends State<TaskEditView> {
     return items;
   }
 
+  EditData taskForm = EditData();
   late DateTime currentValue = DateTime.now();
   @override
 // ignore: override_on_non_overriding_member
@@ -123,9 +124,8 @@ class _TaskEditViewState extends State<TaskEditView> {
                 return CircularProgressIndicator();
               }
               if (state is TaskEditBlocSuccess) {
-                EditData taskForm = this.requestMethod == 'add'
-                    ? EditData()
-                    : state.taskEditModel;
+                taskForm = state.taskEditModel;
+                print(this.requestMethod);
                 if (taskForm.reviewDate != null) {
                   currentValue = DateTime.parse(taskForm.reviewDate!);
                 }
