@@ -19,48 +19,29 @@ class _HomePageState extends State<HomePage> {
     return Scaffold(
         backgroundColor: Color.fromRGBO(58, 66, 86, 1.0),
         appBar: homeAppBar(),
-        bottomNavigationBar: bottomNavigator(),
-        body: BlocProvider<TaskBloc>(
-          create: (context) => TaskBloc(
-              taskRespository: TaskRespository(taskRequest: TaskRequest())),
-          child: TaskListPage(),
+        body: Container(
+          child: Text('Container'),
         ));
   }
 
   Container bottomNavigator() {
+    int currentTab = 0;
     return Container(
       height: 55,
-      child: BottomAppBar(
-        color: Color.fromRGBO(58, 66, 86, 1.0),
-        child: Row(
-          mainAxisAlignment: MainAxisAlignment.spaceEvenly,
-          children: [
-            IconButton(
-                onPressed: null,
-                icon: Icon(
-                  Icons.task,
-                  color: Colors.white,
-                )),
-            IconButton(
-                onPressed: null,
-                icon: Icon(
-                  Icons.checklist,
-                  color: Colors.white,
-                )),
-            IconButton(
-                onPressed: null,
-                icon: Icon(
-                  Icons.contacts,
-                  color: Colors.white,
-                )),
-            IconButton(
-                onPressed: null,
-                icon: Icon(
-                  Icons.verified_user,
-                  color: Colors.white,
-                ))
-          ],
-        ),
+      child: BottomNavigationBar(
+        backgroundColor: Color.fromRGBO(58, 66, 86, 1.0),
+        items: [
+          BottomNavigationBarItem(icon: Icon(Icons.task), label: 'Task'),
+          BottomNavigationBarItem(
+              icon: Icon(Icons.checklist_outlined), label: 'Checklist')
+        ],
+        onTap: (index) {
+          print(index);
+          setState(() {
+            currentTab = index;
+          });
+        },
+        currentIndex: currentTab,
       ),
     );
   }

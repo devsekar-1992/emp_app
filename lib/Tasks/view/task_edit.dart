@@ -1,4 +1,3 @@
-import 'dart:async';
 import 'dart:convert';
 
 import 'package:date_format/date_format.dart';
@@ -81,13 +80,16 @@ class _TaskEditViewState extends State<TaskEditView> {
 
   EditData taskForm = EditData();
   late DateTime currentValue = DateTime.now();
+  late String titleName;
   @override
 // ignore: override_on_non_overriding_member
   void initState() {
     if (widget.taskReviewId != 0) {
       this.requestMethod = 'update';
+      this.titleName = 'Update Task';
     } else {
       this.requestMethod = 'add';
+      this.titleName = 'Add Task';
     }
     super.initState();
   }
@@ -102,12 +104,15 @@ class _TaskEditViewState extends State<TaskEditView> {
     var _formKey = GlobalKey<FormState>();
     return Scaffold(
       key: _scaffoldKey,
-      appBar: AppBar(),
+      appBar: AppBar(
+        title: Text(titleName),
+      ),
       body: Form(
         key: _formKey,
         child: BlocListener<TaskEditBlocBloc, TaskEditBlocState>(
           listener: (context, state) {
             if (state is TaskEditBlocSuccessSave) {
+              this._showSnackBar(context, state.message, 'success');
               taskDetailBloc.add(TaskDetail(taskId: widget.taskId));
               Navigator.pop(context);
             }
@@ -122,6 +127,9 @@ class _TaskEditViewState extends State<TaskEditView> {
               }
               if (state is TaskEditBlocLoading) {
                 return CircularProgressIndicator();
+              }
+              if (state is TaskEditBlocFailure) {
+                this._showSnackBar(context, 'Something Went Wrong', 'error');
               }
               if (state is TaskEditBlocSuccess) {
                 taskForm = state.taskEditModel;
@@ -299,5 +307,19 @@ class _TaskEditViewState extends State<TaskEditView> {
     this.reviewDate.clear();
     this.url.clear();
     super.dispose();
+  }
+
+  void _showSnackBar(context, message, type) {
+    Color? color;
+    if (type == 'success') {
+      color = Colors.green;
+    } else if (type == 'error') {
+      color = Colors.redAccent;
+    }
+    final snackBar = SnackBar(
+      content: Text(message),
+      backgroundColor: color,
+    );
+    ScaffoldMessenger.of(context).showSnackBar(snackBar);
   }
 }

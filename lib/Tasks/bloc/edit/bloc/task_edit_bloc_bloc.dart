@@ -4,7 +4,6 @@ import 'package:bloc/bloc.dart';
 import 'package:emp_app/Settings/Picklist/models/picklist_items_model.dart';
 import 'package:emp_app/Tasks/data/task_repository/task_repository.dart';
 import 'package:emp_app/Tasks/models/task_edit_model.dart';
-import 'package:equatable/equatable.dart';
 
 part 'task_edit_bloc_event.dart';
 part 'task_edit_bloc_state.dart';
@@ -28,10 +27,13 @@ class TaskEditBlocBloc extends Bloc<TaskEditBlocEvent, TaskEditBlocState> {
     if (event is CreateTask) {
       try {
         print('Events' + event.taskForm.toString());
-        await taskRespository.saveTaskInfo(event.taskForm);
+        final response = await taskRespository.saveTaskInfo(event.taskForm);
         print('Events finish');
-        yield TaskEditBlocSuccessSave();
-      } catch (e) {}
+        print(response.data['data']);
+        yield TaskEditBlocSuccessSave(message: response.data['data']);
+      } catch (e) {
+        yield TaskEditBlocFailure(error: e.toString());
+      }
     }
     if (event is TaskUpdate) {}
   }
@@ -49,11 +51,10 @@ class TaskEditBlocBloc extends Bloc<TaskEditBlocEvent, TaskEditBlocState> {
             taskEditModel: response.data[0],
             picklistData: responsePicklist.data);
       } else {
-        yield TaskEditBlocFailure();
+        yield TaskEditBlocFailure(error: 'Something Went Wrong');
       }
     } catch (e) {
-      print('Catch');
-      print(e.toString());
+      yield TaskEditBlocFailure(error: e.toString());
     }
   }
 

@@ -13,7 +13,6 @@ class TaskBloc extends Bloc<TaskEvent, TaskState> {
   Stream<TaskState> mapEventToState(TaskEvent event) async* {
     yield TaskInitial();
     try {
-      print(event);
       if (event is TaskList) {
         yield* _mapTaskListToState(event);
       }

@@ -18,6 +18,13 @@ class TaskEditBlocSuccess extends TaskEditBlocState {
   List<Object> get props => [taskEditModel];
 }
 
-class TaskEditBlocSuccessSave extends TaskEditBlocState {}
+class TaskEditBlocSuccessSave extends TaskEditBlocState {
+  String? message;
 
-class TaskEditBlocFailure extends TaskEditBlocState {}
+  TaskEditBlocSuccessSave({required this.message});
+}
+
+class TaskEditBlocFailure extends TaskEditBlocState {
+  final String error;
+  TaskEditBlocFailure({required this.error});
+}

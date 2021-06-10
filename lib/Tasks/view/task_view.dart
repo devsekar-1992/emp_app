@@ -8,33 +8,61 @@ import 'package:emp_app/Tasks/view/task_detail.dart';
 import 'package:emp_app/services/Task/Task.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
+import 'package:flutter_speed_dial/flutter_speed_dial.dart';
+import 'package:timeago/timeago.dart' as timeago;
 
 class TaskListPage extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
-    print('taskList');
     context.read<TaskBloc>().add(TaskList());
-    return BlocBuilder<TaskBloc, TaskState>(
-      builder: (context, state) {
-        print('remove build');
-        print(state);
-        if (state is TaskInitial) {}
-        if (state is TaskLoading) {
-          print('loading');
-          return CircularProgressIndicator();
-        }
-        if (state is TaskSuccess) {
-          return makeBody(context, state.taskModels);
-        }
-        if (state is TaskFailure) {
-          print(state.error);
-        }
-        return Container(
-          child: Text('No List view'),
-        );
-      },
+    return Scaffold(
+      appBar: AppBar(
+        title: Text('Tasks'),
+        elevation: 0,
+        backgroundColor: Color.fromRGBO(64, 75, 96, .9),
+      ),
+      body: BlocBuilder<TaskBloc, TaskState>(
+        builder: (context, state) {
+          if (state is TaskInitial) {}
+          if (state is TaskLoading) {
+            return Center(child: CircularProgressIndicator());
+          }
+          if (state is TaskSuccess) {
+            return makeBody(context, state.taskModels);
+          }
+          if (state is TaskFailure) {
+            print(state.error);
+          }
+          return Container(
+            child: Text('No List view'),
+          );
+        },
+      ),
+      floatingActionButton: _speedDialTaskList(context),
     );
   }
+}
+
+SpeedDial _speedDialTaskList(context) {
+  return SpeedDial(
+    icon: Icons.add,
+    activeIcon: Icons.remove,
+    backgroundColor: Colors.white,
+    foregroundColor: Colors.black,
+    children: [
+      SpeedDialChild(
+          child: Icon(Icons.add),
+          backgroundColor: Colors.purple,
+          label: 'Add Task',
+          onTap: () {}),
+      SpeedDialChild(
+        child: Icon(Icons.sync),
+        backgroundColor: Colors.indigoAccent,
+        label: 'Sync With Valor Tracker',
+        onTap: () {},
+      )
+    ],
+  );
 }
 
 Container makeBody(context, items) {
@@ -47,14 +75,18 @@ Container makeBody(context, items) {
           if (items != null) {
             return makeCard(context, items[index]);
           }
-          return CircularProgressIndicator();
+          return Center(child: CircularProgressIndicator());
         }),
   );
 }
 
 Card makeCard(context, data) => Card(
-    elevation: 8.0,
-    margin: EdgeInsets.symmetric(horizontal: 10, vertical: 10),
+    color: Color.fromRGBO(64, 75, 96, .9),
+    elevation: 5.0,
+    shape: RoundedRectangleBorder(
+      borderRadius: BorderRadius.all(Radius.circular(20)),
+    ),
+    margin: EdgeInsets.all(20.0),
     child: InkWell(
       onTap: () {
         Navigator.push(
@@ -73,30 +105,61 @@ Card makeCard(context, data) => Card(
             ));
       },
       child: Container(
-        decoration: BoxDecoration(color: Color.fromRGBO(64, 75, 96, .9)),
+        padding: EdgeInsets.only(top: 10),
         child: ListTile(
+          mouseCursor: MouseCursor.defer,
           contentPadding:
-              EdgeInsets.symmetric(horizontal: 20.0, vertical: 10.0),
-          title: Text(
-            data.taskName,
-            style: TextStyle(color: Colors.white, fontWeight: FontWeight.bold),
-          ),
-          // subtitle: Text("Intermediate", style: TextStyle(color: Colors.white)),
-
-          subtitle: Row(
-            children: <Widget>[
-              Icon(Icons.api, color: Colors.blue),
-              Text(data.taskAssigneeDetails.name,
+              EdgeInsets.symmetric(horizontal: 10.0, vertical: 10.0),
+          title: Row(
+            mainAxisAlignment: MainAxisAlignment.spaceBetween,
+            crossAxisAlignment: CrossAxisAlignment.start,
+            children: [
+              Container(
+                margin: EdgeInsets.only(left: 15),
+                child: Text(
+                  data.taskName,
+                  style: TextStyle(
+                      color: Colors.white, fontWeight: FontWeight.bold),
+                ),
+              ),
+              Text(
+                  timeago.format(DateTime.parse(data.taskCreatedAt)).toString(),
                   style: TextStyle(color: Colors.white)),
-              Icon(Icons.cabin, color: Colors.amberAccent),
-              Text(data.taskDetails.taskVersion,
-                  style: TextStyle(color: Colors.white)),
-              Icon(Icons.date_range, color: Colors.redAccent),
-              Text(data.taskCreatedAt, style: TextStyle(color: Colors.white)),
-              Icon(Icons.production_quantity_limits, color: Colors.tealAccent),
-              Text(data.taskDetails.taskProject,
-                  style: TextStyle(color: Colors.white))
             ],
+          ),
+          subtitle: Container(
+            padding: EdgeInsets.all(10.0),
+            child: Row(
+              children: <Widget>[
+                Align(
+                  child: Icon(Icons.account_circle, color: Colors.blue),
+                ),
+                Container(
+                  margin: EdgeInsets.only(left: 5.0, right: 10, top: 2),
+                  child: Text(data.taskAssigneeDetails.name,
+                      textAlign: TextAlign.start,
+                      style: TextStyle(color: Colors.white)),
+                ),
+                Align(
+                  child: Icon(Icons.cabin, color: Colors.amberAccent),
+                ),
+                Container(
+                  margin: EdgeInsets.only(left: 5.0, right: 10, top: 2),
+                  child: Text(data.taskDetails.taskVersion,
+                      textAlign: TextAlign.start,
+                      style: TextStyle(color: Colors.white)),
+                ),
+                Align(
+                    child: Icon(Icons.production_quantity_limits,
+                        color: Colors.tealAccent)),
+                Container(
+                  margin: EdgeInsets.only(left: 5.0, right: 10, top: 2),
+                  child: Text(data.taskDetails.taskProject,
+                      textAlign: TextAlign.start,
+                      style: TextStyle(color: Colors.white)),
+                ),
+              ],
+            ),
           ),
         ),
       ),
