@@ -1,3 +1,4 @@
+import 'package:emp_app/Settings/Picklist/models/picklist_items_model.dart';
 import 'package:emp_app/Tasks/bloc/task_event.dart';
 import 'package:emp_app/Tasks/bloc/task_state.dart';
 import 'package:emp_app/Tasks/data/task_repository/task_repository.dart';
@@ -22,6 +23,8 @@ class TaskBloc extends Bloc<TaskEvent, TaskState> {
   Stream<TaskState> _mapTaskListToState(TaskList event) async* {
     yield TaskLoading();
     try {
+      final PicklistItemsModel responsePicklist =
+          await taskRespository.loadPickListData();
       final TaskListModel response = await this.taskRespository.getTaskItems();
       // ignore: unnecessary_null_comparison
       if (response != null) {

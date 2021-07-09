@@ -43,15 +43,18 @@ class TaskEditBlocBloc extends Bloc<TaskEditBlocEvent, TaskEditBlocState> {
     try {
       final PicklistItemsModel responsePicklist =
           await taskRespository.loadPickListData();
-      print(responsePicklist);
-      final TaskEditModel response =
-          await taskRespository.getTaskReview(event.taskId);
-      if (response != null) {
-        yield TaskEditBlocSuccess(
-            taskEditModel: response.data[0],
-            picklistData: responsePicklist.data);
+      TaskEditModel response;
+      if (event.requestType == 'update') {
+        response = await taskRespository.getTaskReview(event.taskId);
+
+        if (response != null) {
+          yield TaskEditBlocSuccess(response.data[0], responsePicklist.data);
+        } else {
+          yield TaskEditBlocFailure(error: 'Something Went Wrong');
+        }
       } else {
-        yield TaskEditBlocFailure(error: 'Something Went Wrong');
+        EditData response = EditData();
+        yield TaskEditBlocSuccess(response, responsePicklist.data);
       }
     } catch (e) {
       yield TaskEditBlocFailure(error: e.toString());

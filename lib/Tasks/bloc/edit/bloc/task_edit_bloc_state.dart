@@ -12,8 +12,7 @@ class TaskEditBlocLoading extends TaskEditBlocState {}
 class TaskEditBlocSuccess extends TaskEditBlocState {
   final EditData taskEditModel;
   final PicklistData picklistData;
-  TaskEditBlocSuccess(
-      {required this.taskEditModel, required this.picklistData});
+  TaskEditBlocSuccess(this.taskEditModel, this.picklistData);
   @override
   List<Object> get props => [taskEditModel];
 }

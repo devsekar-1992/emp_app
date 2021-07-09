@@ -1,5 +1,3 @@
-import 'dart:convert';
-
 import 'package:date_format/date_format.dart';
 import 'package:emp_app/Settings/Picklist/models/picklist_items_model.dart';
 import 'package:emp_app/Tasks/bloc/detail/task_detail_bloc.dart';
@@ -7,7 +5,6 @@ import 'package:emp_app/Tasks/bloc/edit/bloc/task_edit_bloc_bloc.dart';
 import 'package:emp_app/Tasks/bloc/task_event.dart';
 import 'package:emp_app/Tasks/models/task_edit_model.dart';
 import 'package:emp_app/Tasks/widgets/task_edit_dropdown.dart';
-import 'package:emp_app/services/auth/auth.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:intl/intl.dart';
@@ -78,7 +75,7 @@ class _TaskEditViewState extends State<TaskEditView> {
     return items;
   }
 
-  EditData taskForm = EditData();
+  late EditData taskForm;
   late DateTime currentValue = DateTime.now();
   late String titleName;
   @override
@@ -105,7 +102,13 @@ class _TaskEditViewState extends State<TaskEditView> {
     return Scaffold(
       key: _scaffoldKey,
       appBar: AppBar(
-        title: Text(titleName),
+        title: Text(
+          titleName,
+          style: TextStyle(color: Colors.black),
+        ),
+        elevation: 0,
+        backgroundColor: Colors.white30,
+        iconTheme: IconThemeData(color: Colors.black),
       ),
       body: Form(
         key: _formKey,
@@ -129,23 +132,28 @@ class _TaskEditViewState extends State<TaskEditView> {
                 return CircularProgressIndicator();
               }
               if (state is TaskEditBlocFailure) {
-                this._showSnackBar(context, 'Something Went Wrong', 'error');
+                print(state);
+                //  this._showSnackBar(context, 'Something Went Wrong', 'error');
               }
               if (state is TaskEditBlocSuccess) {
                 taskForm = state.taskEditModel;
-                print(this.requestMethod);
                 if (taskForm.reviewDate != null) {
                   currentValue = DateTime.parse(taskForm.reviewDate!);
+
+                  reviewDate.text =
+                      DateFormat('yyyy-MM-dd').format(currentValue);
+                } else {
+                  currentValue = DateTime.now();
+
+                  reviewDate.text =
+                      DateFormat('yyyy-MM-dd').format(currentValue);
                 }
-                print('Review Date Controller');
-                print(taskForm.status);
                 return Container(
                   child: Padding(
                     padding: const EdgeInsets.all(8.0),
                     child: Column(children: [
                       DateTimeField(
                           validator: (value) {
-                            print(value);
                             // ignore: unrelated_type_equality_checks
                             if (value == '') {
                               // ignore: unnecessary_statements
@@ -193,9 +201,11 @@ class _TaskEditViewState extends State<TaskEditView> {
                             labelText: 'URL'),
                       ),
                       TaskFormDropdown(
+                        dropdownLabel: 'Reviewer',
                         onChanged: (value) {
                           setState(() {
                             taskForm.userId = value;
+                            selectedUser = value;
                           });
                         },
                         onValidate: (value) {
@@ -209,8 +219,12 @@ class _TaskEditViewState extends State<TaskEditView> {
                         selectedValue: taskForm.userId ?? 1,
                       ),
                       TaskFormDropdown(
+                        dropdownLabel: 'Review Status',
                         onChanged: (value) {
-                          taskForm.status = value;
+                          setState(() {
+                            taskForm.status = value;
+                            selectedStatus = value;
+                          });
                         },
                         onValidate: (value) {
                           if (value == '') {
@@ -223,9 +237,11 @@ class _TaskEditViewState extends State<TaskEditView> {
                         selectedValue: taskForm.status ?? 1,
                       ),
                       TaskFormDropdown(
+                        dropdownLabel: 'Review Type',
                         onChanged: (value) {
                           setState(() {
                             taskForm.reviewTypeId = value;
+                            selectedReviewType = value;
                           });
                         },
                         onValidate: (value) {
@@ -240,47 +256,37 @@ class _TaskEditViewState extends State<TaskEditView> {
                       ),
                       Container(
                         height: 50.0,
-                        child: BottomAppBar(
-                          elevation: 20,
-                          child: Row(
-                            mainAxisAlignment: MainAxisAlignment.spaceAround,
-                            crossAxisAlignment: CrossAxisAlignment.center,
-                            children: [
-                              ElevatedButton(
-                                  style: ElevatedButton.styleFrom(
-                                      primary: Colors.red),
-                                  onPressed: () {
+                        child: Row(
+                          mainAxisAlignment: MainAxisAlignment.spaceAround,
+                          crossAxisAlignment: CrossAxisAlignment.center,
+                          children: [
+                            ElevatedButton(
+                                style: ElevatedButton.styleFrom(
+                                    primary: Colors.red),
+                                onPressed: () {
+                                  BlocProvider.of<TaskEditBlocBloc>(context)
+                                      .close();
+                                  Navigator.pop(context);
+                                },
+                                child: Text('Cancel')),
+                            ElevatedButton(
+                                onPressed: () async {
+                                  if (_formKey.currentState!.validate()) {
+                                    taskForm.reviewDate = reviewDate.text;
+                                    taskForm.reviewTypeId = selectedReviewType;
+                                    taskForm.status = selectedStatus;
+                                    taskForm.userId = selectedUser;
+                                    taskForm.taskId = widget.taskId;
+                                    taskForm.taskReviewId =
+                                        taskForm.taskReviewId;
+                                    taskForm.requestMethod = requestMethod;
+                                    print(taskForm);
                                     BlocProvider.of<TaskEditBlocBloc>(context)
-                                        .close();
-                                    Navigator.pop(context);
-                                  },
-                                  child: Text('Cancel')),
-                              ElevatedButton(
-                                  onPressed: () async {
-                                    if (_formKey.currentState!.validate()) {
-                                      var currentUserInstance =
-                                          await AuthRequest()
-                                              .getCurrentUserId();
-                                      var currentUser =
-                                          jsonDecode(currentUserInstance!);
-                                      //taskForm.reviewDate = reviewDate.text;
-                                      taskForm.reviewTypeId =
-                                          selectedReviewType;
-                                      taskForm.status = taskForm.status;
-                                      taskForm.userId = selectedUser;
-                                      taskForm.taskId = widget.taskId;
-                                      taskForm.taskReviewId =
-                                          taskForm.taskReviewId;
-                                      // currentUser['user']['id'];
-                                      taskForm.requestMethod = requestMethod;
-
-                                      BlocProvider.of<TaskEditBlocBloc>(context)
-                                          .add(CreateTask(taskForm: taskForm));
-                                    }
-                                  },
-                                  child: Text('Save'))
-                            ],
-                          ),
+                                        .add(CreateTask(taskForm: taskForm));
+                                  }
+                                },
+                                child: Text('Save'))
+                          ],
                         ),
                       ),
                     ]),

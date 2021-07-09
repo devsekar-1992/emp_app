@@ -20,8 +20,12 @@ class _TaskDetailViewState extends State<TaskDetailView> {
   final GlobalKey<ScaffoldState> _scaffoldKey = new GlobalKey<ScaffoldState>();
 
   indianFormatDate(reviewDate) {
-    return (DateFormat('dd-MM-yyyy')
-        .format(DateTime.parse(reviewDate.replaceAll(RegExp('"'), ''))));
+    if (reviewDate != '') {
+      return (DateFormat('dd-MM-yyyy')
+          .format(DateTime.parse(reviewDate.replaceAll(RegExp('"'), ''))));
+    } else {
+      return null;
+    }
   }
 
   @override
@@ -75,7 +79,9 @@ class _TaskDetailViewState extends State<TaskDetailView> {
                                                     ..add(TaskEdit(
                                                         taskId: response
                                                             .taskReview![index]
-                                                            .reviewId))),
+                                                            .reviewId,
+                                                        requestType:
+                                                            'update'))),
                                               BlocProvider<
                                                       TaskDetailBloc>.value(
                                                   value: taskDetailBloc)
@@ -159,7 +165,9 @@ class _TaskDetailViewState extends State<TaskDetailView> {
                           providers: [
                             BlocProvider<TaskEditBlocBloc>.value(
                                 value: taskEditBlocBloc
-                                  ..add(TaskEdit(taskId: widget.taskId))),
+                                  ..add(TaskEdit(
+                                      taskId: widget.taskId,
+                                      requestType: 'add'))),
                             BlocProvider<TaskDetailBloc>.value(
                                 value: taskDetailBloc)
                           ],

@@ -10,7 +10,8 @@ abstract class TaskEditBlocEvent {
 // ignore: must_be_immutable
 class TaskEdit extends TaskEditBlocEvent {
   late int taskId;
-  TaskEdit({required this.taskId});
+  late String requestType;
+  TaskEdit({required this.taskId, required this.requestType});
 
   @override
   List<Object> get props => [];

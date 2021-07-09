@@ -4,6 +4,7 @@ import 'package:emp_app/Settings/Picklist/models/picklist_items_model.dart';
 import 'package:emp_app/Tasks/models/task_detail_model.dart';
 import 'package:emp_app/Tasks/models/task_edit_model.dart';
 import 'package:emp_app/Tasks/models/task_list_model.dart';
+import 'package:emp_app/helpers/db/db_helpers.dart';
 
 import '../API/api.dart';
 
@@ -24,8 +25,22 @@ class TaskRequest {
   }
 
   Future<PicklistItemsModel> getPicklistList() async {
-    final picklistResponse = await Api().getRequest('picklist/list', '');
-    return PicklistItemsModel.fromJson(picklistResponse.data);
+    final picklistData = await HiveDB().getFromBox('picklist_data', 'data');
+    //final picklistData = null;
+    final picklistResponse;
+    print(picklistData);
+    if (picklistData == null) {
+      print('Fresh Picklist');
+      picklistResponse = await Api().getRequest('picklist/list', '');
+      await HiveDB().putIntoBox(
+          'picklist_data', 'data', jsonEncode(picklistResponse.data));
+      return PicklistItemsModel.fromJson(picklistResponse.data);
+    } else {
+      print('Already Picklist');
+      picklistResponse = jsonDecode(picklistData);
+      print(picklistResponse);
+      return PicklistItemsModel.fromJson(picklistResponse);
+    }
   }
 
   Future saveTaskEdit(EditData taskInfo) async {

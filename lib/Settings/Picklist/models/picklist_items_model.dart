@@ -22,11 +22,13 @@ class PicklistData {
   late Users users;
   late TaskStatus taskStatus;
   late ReviewStatus reviewStatus;
+  late MainCategories mainCategories;
 
   PicklistData(
       {required this.users,
       required this.taskStatus,
-      required this.reviewStatus});
+      required this.reviewStatus,
+      required this.mainCategories});
 
   PicklistData.fromJson(Map<String, dynamic> json) {
     users = (json['users'] != null ? new Users.fromJson(json['users']) : null)!;
@@ -35,6 +37,9 @@ class PicklistData {
         : null)!;
     reviewStatus = (json['reviewStatus'] != null
         ? new ReviewStatus.fromJson(json['reviewStatus'])
+        : null)!;
+    mainCategories = (json['mainCategories'] != null
+        ? new MainCategories.fromJson(json['mainCategories'])
         : null)!;
   }
 
@@ -48,6 +53,9 @@ class PicklistData {
     }
     if (this.reviewStatus != null) {
       data['reviewStatus'] = this.reviewStatus.toJson();
+    }
+    if (this.mainCategories != null) {
+      data['mainCategories'] = this.mainCategories.toJson();
     }
     return data;
   }
@@ -186,6 +194,71 @@ class ReviewStatusList {
     final Map<String, dynamic> data = new Map<String, dynamic>();
     data['review_type_id'] = this.id;
     data['review_type'] = this.name;
+    return data;
+  }
+}
+
+class MainCategories {
+  bool? status;
+  List<ChecklistMainCategories>? checklistMainCategories;
+
+  MainCategories({this.status, this.checklistMainCategories});
+
+  MainCategories.fromJson(Map<String, dynamic> json) {
+    status = json['status'];
+    if (json['checklistMainCategories'] != null) {
+      checklistMainCategories =
+          new List<ChecklistMainCategories>.empty(growable: true);
+      json['checklistMainCategories'].forEach((v) {
+        checklistMainCategories!.add(new ChecklistMainCategories.fromJson(v));
+      });
+    }
+  }
+
+  Map<String, dynamic> toJson() {
+    final Map<String, dynamic> data = new Map<String, dynamic>();
+    data['status'] = this.status;
+    if (this.checklistMainCategories != null) {
+      data['checklistMainCategories'] =
+          this.checklistMainCategories!.map((v) => v.toJson()).toList();
+    }
+    return data;
+  }
+}
+
+class ChecklistMainCategories {
+  int? id;
+  int? reviewTypeId;
+  String? mainCategories;
+  String? description;
+  Null createdAt;
+  Null updatedAt;
+
+  ChecklistMainCategories(
+      {this.id,
+      this.reviewTypeId,
+      this.mainCategories,
+      this.description,
+      this.createdAt,
+      this.updatedAt});
+
+  ChecklistMainCategories.fromJson(Map<String, dynamic> json) {
+    id = json['id'];
+    reviewTypeId = json['review_type_id'];
+    mainCategories = json['main_categories'];
+    description = json['description'];
+    createdAt = json['created_at'];
+    updatedAt = json['updated_at'];
+  }
+
+  Map<String, dynamic> toJson() {
+    final Map<String, dynamic> data = new Map<String, dynamic>();
+    data['id'] = this.id;
+    data['review_type_id'] = this.reviewTypeId;
+    data['main_categories'] = this.mainCategories;
+    data['description'] = this.description;
+    data['created_at'] = this.createdAt;
+    data['updated_at'] = this.updatedAt;
     return data;
   }
 }
